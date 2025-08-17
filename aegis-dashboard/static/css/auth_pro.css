@@ -1,0 +1,187 @@
+/* FILE: static/css/auth_pro.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg-dark: #0f172a;
+    --bg-light: #1e293b;
+    --border-color: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --success: #10b981;
+    --font-family: 'Inter', sans-serif;
+    --radius: 0.75rem;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    margin: 0;
+    overflow: hidden;
+}
+
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(15,23,42,0) 60%);
+    animation: pulse 10s infinite ease-in-out;
+    z-index: -1;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+.page-container, .auth-page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 2rem;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.auth-page-container {
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.logo { font-size: 1.25rem; font-weight: 600; }
+.nav-links { display: flex; gap: 1rem; }
+
+.hero-section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.hero-title { font-size: 3.5rem; font-weight: 700; line-height: 1.2; margin-bottom: 1rem; }
+.hero-subtitle { font-size: 1.2rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2.5rem; }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.25rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.btn-primary { background-color: var(--primary); color: white; }
+.btn-primary:hover { background-color: var(--primary-hover); }
+.btn-secondary { background-color: var(--bg-light); color: var(--text-primary); border-color: var(--border-color); }
+.btn-secondary:hover { background-color: var(--border-color); }
+.btn-large { padding: 1rem 2rem; font-size: 1.1rem; }
+.btn-full { width: 100%; }
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--bg-light);
+    padding: 2rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.auth-header { text-align: center; margin-bottom: 1.5rem; }
+.auth-header h2 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+.auth-header p { color: var(--text-secondary); font-size: 0.9rem; }
+
+.auth-form .form-group { text-align: left; margin-bottom: 1rem; }
+.form-group .label-group { display: flex; justify-content: space-between; align-items: center; }
+.form-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; font-size: 0.875rem; }
+.form-group input {
+    width: 100%;
+    padding: 0.65rem;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease;
+}
+.form-group input:focus { outline: none; border-color: var(--primary); }
+.forgot-password-link { font-size: 0.8rem; color: var(--text-secondary); text-decoration: none; }
+.forgot-password-link:hover { color: var(--primary); text-decoration: underline; }
+
+.social-auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-secondary);
+    margin: 1.5rem 0;
+    font-size: 0.8rem;
+}
+.social-auth-divider::before, .social-auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
+.social-auth-divider span { padding: 0 0.75rem; }
+
+.social-auth-buttons { display: flex; flex-direction: column; gap: 0.75rem; }
+.btn-social { border-color: var(--border-color); color: var(--text-primary); }
+.btn-social:hover { background-color: var(--border-color); }
+.btn-social i { margin-right: 0.75rem; font-size: 1.1rem; }
+.btn-social.google { color: #db4437; }
+.btn-social.github { color: #f8fafc; }
+
+.auth-switch { margin-top: 1.5rem; text-align: center; font-size: 0.9rem; }
+.auth-switch a { color: var(--primary); font-weight: 600; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+
+/* --- Password Strength (UPDATED) --- */
+.password-strength-meter {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem; /* Added margin to push button down */
+    height: 22px; /* Reserve space to prevent layout shift */
+}
+.strength-bar {
+    height: 5px;
+    width: 0%;
+    background-color: var(--danger);
+    border-radius: 3px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+.strength-text {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: left;
+    transition: color 0.3s ease;
+}
+.strength-text.weak { color: var(--danger); }
+.strength-text.medium { color: var(--warning); }
+.strength-text.strong { color: var(--success); }
+
+/* --- Alerts --- */
+.alert { padding: 0.75rem; margin-bottom: 1rem; border-radius: 0.5rem; text-align: center; font-weight: 500; font-size: 0.9rem;}
+.alert-success { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
+.alert-danger { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.alert-warning { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.alert-info { background-color: rgba(100, 116, 139, 0.2); color: #64748b; }

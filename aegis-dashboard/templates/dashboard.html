@@ -1,0 +1,251 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Aegis AI Sentry - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body data-user-id="{{ user_id }}">
+
+    <div class="dashboard-container">
+        <!-- Sidebar (Remains the same) -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <div class="logo-text">
+                    <h1>Aegis AI Sentry</h1>
+                    <p>AI Security Monitoring</p>
+                </div>
+            </div>
+            <div class="sidebar-scrollable-nav">
+                <nav class="sidebar-nav">
+                    <a href="{{ url_for('dashboard') }}" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="{{ url_for('activity_log') }}" class="nav-item" id="activity-log-nav"><i
+                            class="fas fa-history"></i> Activity Log
+                        <span class="nav-badge" id="activity-log-badge">0</span>
+                    </a>
+
+
+                    <a href="{{ url_for('dlp_rules') }}" class="nav-item"><i class="fas fa-user-secret"></i> DLP
+                        Rules</a>
+                    <a href="{{ url_for('integrations') }}" class="nav-item"><i class="fas fa-plug"></i>
+                        Integrations</a>
+                    <a href="{{ url_for('settings') }}" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="{{ url_for('logout') }}" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+                </nav>
+
+
+            </div>
+
+            <div class="sidebar-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-server"></i> System Status</h2>
+                    <div class="api-status" id="api-status">
+                        <div class="status-indicator {{ 'online' if api_healthy else 'offline' }}"></div>
+                        <span id="api-status-text">{{ 'Online' if api_healthy else 'Offline' }}</span>
+                    </div>
+                </div>
+                <div class="system-info">
+                    <div class="info-item">
+                        <span>API Endpoint</span>
+                        <strong>{{ api_base_url }}</strong>
+                    </div>
+                    <div class="info-item">
+                        <span>Active Profile</span>
+                        <select id="security-profile" class="profile-select">
+                            <option value="fast">Fast</option>
+                            <option value="balanced" selected>Balanced</option>
+                            <option value="paranoid">Paranoid</option>
+                        </select>
+                    </div>
+                    <div class="info-item">
+                        <span>Last Update</span>
+                        <strong id="last-updated">{{ current_time }}</strong>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div class="resizer" id="dragHandle"></div>
+
+
+        <!-- Main Content (Completely Redesigned) -->
+        <main class="main-content">
+
+            <header class="main-header">
+
+                <button class="mobile-nav-toggle" id="mobileNavToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="dashboard-title">Dashboard</h1>
+
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Type to search...">
+                </div>
+
+                <a href="{{ url_for('profile') }}" class="user-profile">
+                    <span class="user-name">{{ current_user.username or 'sahil' }}</span>
+                    <div class="user-avatar">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6_YzZGTOfbA9BktdZxqxsH3N8Zl0dopHAyA&s?u={{ current_user.id or 'default' }}"
+                            alt="User Avatar">
+                    </div>
+                </a>
+
+            </header>
+            <!-- Row 1: Upgraded Stat Cards -->
+            <div class="stats-grid-pro">
+                <div class="stat-card-pro gradient-blue">
+                    <div class="stat-info">
+                        <p>High-Risk Events</p>
+                        <h3 id="high-risk-threats">0</h3>
+                        <span id="high-risk-total">of 0 total</span>
+                    </div>
+                    <div class="stat-gauge">
+                        <canvas id="high-risk-gauge"></canvas>
+                    </div>
+                </div>
+                <div class="stat-card-pro gradient-purple">
+                    <div class="stat-info">
+                        <p>Total Threats</p>
+                        <h3 id="total-threats">0</h3>
+                        <span id="total-threats-percentage">0% of requests</span>
+                    </div>
+                    <div class="stat-gauge">
+                        <canvas id="total-threats-gauge"></canvas>
+                    </div>
+                </div>
+                <div class="stat-card-pro gradient-green">
+                    <div class="stat-info">
+                        <p>Blocked Attacks</p>
+                        <h3 id="blocked-attacks">0</h3>
+                        <span id="blocked-attacks-percentage">0% of threats</span>
+                    </div>
+                    <div class="stat-gauge">
+                        <canvas id="blocked-attacks-gauge"></canvas>
+                    </div>
+                </div>
+                <div class="stat-card-pro gradient-teal">
+                    <div class="stat-info">
+                        <p>Avg. Response</p>
+                        <h3 id="avg-response-time">0ms</h3>
+                        <span>API Healthy</span>
+                    </div>
+                    <div class="stat-gauge">
+                        <canvas id="response-time-gauge"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Main Dashboard Grid -->
+            <div class="dashboard-grid-new">
+
+                <div class="main-column">
+
+                    <div class="chart-filters">
+                        <button class="filter-btn" data-filter="24h">24h</button>
+                        <button class="filter-btn" data-filter="7d">7d</button>
+                        <button class="filter-btn" data-filter="30d">30d</button>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header no-border">
+                            <h2>Threats Over Time</h2>
+                        </div>
+                        <div class="chart-container-large">
+                            <canvas id="threats-over-time-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card" id="ai-assistant-card">
+                        <div class="card-header no-border">
+                            <h2>Live Analysis Assistant</h2>
+                        </div>
+
+                        <div class="ai-assistant-chat-window" id="chat-window">
+                            <div class="assistant-message">
+                                <div class="message-bubble">
+                                    <p>Hello! I am the Aegis AI Assistant. Paste any text below to analyze it for
+                                        security threats.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ai-assistant-input-area">
+                            <form id="analyze-form" class="ai-assistant-form">
+                                <textarea id="text-input" placeholder="Analyze a prompt for threats..."
+                                    rows="1"></textarea>
+                                <button type="submit" id="send-btn" class="send-btn" title="Send">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="side-column">
+                    <div class="dashboard-card">
+                        <div class="card-header no-border">
+                            <h2>Action Center</h2>
+                        </div>
+                        <div class="action-list">
+                            <a href="{{ url_for('dlp_rules') }}" class="action-item">
+                                <i class="fas fa-user-secret"></i>
+                                <span>Configure DLP Rules</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                            <a href="{{ url_for('activity_log') }}" class="action-item">
+                                <i class="fas fa-history"></i>
+                                <span>View Full Activity Log</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                            <button id="run-tests-btn" class="action-item button">
+                                <i class="fas fa-vial"></i>
+                                <span>Run System Tests</span>
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-header no-border">
+                            <h2>Recent High-Risk Events</h2>
+                        </div>
+                        <div id="recent-events-feed" class="recent-events-feed">
+                            <p class="placeholder">No high-risk events detected recently.</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-header no-border">
+                            <h2>Threat Distribution</h2>
+                        </div>
+                        <div class="chart-container-medium">
+                            <canvas id="threat-distribution-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+    <div id="notification-container"></div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+</body>
+
+</html>

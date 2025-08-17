@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Aegis AI Sentry - Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <div class="logo-text">
+                    <h1>Aegis AI Sentry</h1>
+                    <p>AI Security Monitoring</p>
+                </div>
+            </div>
+            <div class="sidebar-scrollable-nav">
+                <nav class="sidebar-nav">
+                    <a href="{{ url_for('dashboard') }}" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="{{ url_for('activity_log') }}" class="nav-item"><i class="fas fa-history"></i> Activity
+                        Log</a>
+                    <a href="{{ url_for('dlp_rules') }}" class="nav-item"><i class="fas fa-user-secret"></i> DLP
+                        Rules</a>
+                    <a href="{{ url_for('integrations') }}" class="nav-item"><i class="fas fa-plug"></i>
+                        Integrations</a>
+                    <a href="{{ url_for('settings') }}" class="nav-item active"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="{{ url_for('logout') }}" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </nav>
+            </div>
+
+        </aside>
+        <div class="resizer" id="dragHandle"></div>
+
+        <main class="main-content">
+            <header class="main-header">
+                <button class="mobile-nav-toggle" id="mobileNavToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="dashboard-title">Engine Settings</h1>
+                <button id="save-settings-btn" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+            </header>
+
+            <div class="settings-section">
+                <h2 class="settings-section-title">Threat Detection Weights</h2>
+                <p class="settings-section-description">Adjust how much each threat type contributes to the final risk
+                    score.</p>
+                <div id="weights-grid" class="settings-grid">
+                    <p class="placeholder">Loading weights...</p>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2 class="settings-section-title">Detection Thresholds</h2>
+                <p class="settings-section-description">Fine-tune the sensitivity of various detection methods.</p>
+                <div id="thresholds-grid" class="settings-grid">
+                    <p class="placeholder">Loading thresholds...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+</body>
+
+</html>

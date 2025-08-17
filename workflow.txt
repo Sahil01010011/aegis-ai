@@ -1,0 +1,15 @@
+# 1. Imports
+# 2. Logger setup  
+# 3. Load environment
+# 4. Enums (SecurityProfile)
+# 5. Configuration class (AegisConfig)
+# 6. Config initialization
+# 7. Circuit Breaker Classes
+# 8. FastAPI/spaCy/Groq initialization
+# 9. Homoglyph mapping
+# 10. Pydantic Models
+# 11. 🔥 get_effective_profile function (ADD HERE)
+# 12. Security Helper Functions (robust_normalize, calculate_entropy, etc.)
+# 13. Guard LLM Functions
+# 14. Main Security Scanner
+# 15. API Endpoints

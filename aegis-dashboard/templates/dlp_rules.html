@@ -1,0 +1,158 @@
+<!-- templates/dlp_rules.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Aegis AI Sentry - DLP Rules</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <div class="logo-text">
+                    <h1>Aegis AI Sentry</h1>
+                    <p>AI Security Monitoring</p>
+                </div>
+            </div>
+
+            <div class="sidebar-scrollable-nav">
+                <nav class="sidebar-nav">
+                    <a href="{{ url_for('dashboard') }}" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="{{ url_for('activity_log') }}" class="nav-item"><i class="fas fa-history"></i> Activity
+                        Log</a>
+
+                    <!-- The wrapping div has been removed to fix alignment -->
+                    <a href="{{ url_for('dlp_rules') }}"
+                        class="nav-item {% if request.endpoint == 'dlp_rules' %}active{% endif %}">
+                        <i class="fas fa-user-secret"></i> DLP Rules
+                    </a>
+                    <a href="{{ url_for('integrations') }}" class="nav-item"><i class="fas fa-plug"></i>
+                        Integrations</a>
+                    <a href="{{ url_for('settings') }}" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="{{ url_for('logout') }}" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+                </nav>
+            </div>
+
+
+
+            <div class="sidebar-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-server"></i> System Status</h2>
+                    <div class="api-status" id="api-status">
+                        <div class="status-indicator {{ 'online' if api_healthy else 'offline' }}"></div>
+                        <span id="api-status-text">{{ 'Online' if api_healthy else 'Offline' }}</span>
+                    </div>
+                </div>
+                <div class="system-info">
+                    <div class="info-item">
+                        <span>API Endpoint</span>
+                        <strong>{{ api_base_url }}</strong>
+                    </div>
+                    <div class="info-item">
+                        <span>Last Update</span>
+                        <strong id="last-updated">{{ current_time }}</strong>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div class="resizer" id="dragHandle"></div>
+
+        <!-- Main Content for DLP Rule Editor -->
+        <main class="main-content">
+            <div class="dlp-header">
+                <div>
+                    <h2>DLP Rule Editor</h2>
+                    <p>Manage rules to detect and redact sensitive data before analysis.</p>
+                </div>
+                <button id="add-new-rule-btn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Rule
+                </button>
+            </div>
+
+            <div class="dlp-rules-card">
+                <!-- Rule list will be injected here by dlp_rules.js -->
+                <div id="rule-list">
+                    <p class="placeholder">Loading rules...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Adding/Editing Rules (no changes needed here) -->
+    <div id="rule-modal" class="modal hidden">
+        <!-- ... The existing modal code ... -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Rule</h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="rule-id">
+                <div class="form-group">
+                    <label for="rule-name">Rule Name</label>
+                    <input type="text" id="rule-name" placeholder="e.g., Indian PAN Card" required>
+                </div>
+                <div class="form-group">
+                    <label for="rule-description">Description</label>
+                    <input type="text" id="rule-description" placeholder="Detects 10-digit Indian PAN numbers">
+                </div>
+                <div class="form-group">
+                    <label for="rule-pattern">Regex Pattern</label>
+                    <input type="text" id="rule-pattern" placeholder="[A-Z]{5}[0-9]{4}[A-Z]{1}" required>
+                    <p id="regex-error" class="regex-error hidden">Invalid Regex Pattern</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="rule-action">Action</label>
+                        <select id="rule-action">
+                            <option value="redact">Redact</option>
+                            <option value="block">Block</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="rule-severity">Severity</label>
+                        <select id="rule-severity">
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option selected>High</option>
+                            <option>Critical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="regex-tester">
+                    <h4>Test Pattern</h4>
+                    <div class="form-group">
+                        <label for="test-input">Sample Text</label>
+                        <textarea id="test-input" rows="3" placeholder="My PAN is ABCDE1234F, please help."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Result</label>
+                        <div id="test-output" class="test-output"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                <button id="save-btn" class="btn btn-primary">Save Rule</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dlp_rules.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+</body>
+
+</html>

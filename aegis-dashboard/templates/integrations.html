@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Aegis AI Sentry - Integrations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <div class="logo-text">
+                    <h1>Aegis AI Sentry</h1>
+                    <p>AI Security Monitoring</p>
+                </div>
+            </div>
+            <div class="sidebar-scrollable-nav">
+                <nav class="sidebar-nav">
+                    <a href="{{ url_for('dashboard') }}" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="#" class="nav-item"><i class="fas fa-history"></i> Activity Log</a>
+
+                    <a href="{{ url_for('dlp_rules') }}" class="nav-item"><i class="fas fa-user-secret"></i> DLP
+                        Rules</a>
+                    <a href="{{ url_for('integrations') }}" class="nav-item active"><i class="fas fa-plug"></i>
+                        Integrations</a>
+                    <a href="{{ url_for('settings') }}" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="{{ url_for('logout') }}" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </nav>
+            </div>
+
+        </aside>
+        <div class="resizer" id="dragHandle"></div>
+
+        <main class="main-content">
+            <header class="main-header">
+                <button class="mobile-nav-toggle" id="mobileNavToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="dashboard-title">Integrations</h1>
+            </header>
+
+            <div class="profile-card">
+                <div class="card-header no-border" style="align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <i class="fab fa-slack" style="font-size: 2rem;"></i>
+                        <div>
+                            <h2>Slack Notifications</h2>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Get real-time alerts for
+                                high-severity threats.</p>
+                        </div>
+                    </div>
+                    <div id="slack-status" class="api-status">
+                    </div>
+                </div>
+
+                <form id="slack-form" style="margin-top: 1.5rem;">
+                    <div class="form-group"> <label for="webhook-url">Slack Webhook URL</label>
+                        <input type="password" id="webhook-url" name="webhook_url"
+                            placeholder="https://hooks.slack.com/services/...">
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.5rem;">Your webhook URL is
+                            encrypted and stored securely.</p>
+                    </div>
+                    <div class="form-actions"
+                        style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-primary">Save Configuration</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div id="notification-container"></div>
+
+    <script src="{{ url_for('static', filename='js/integrations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+</body>
+
+</html>

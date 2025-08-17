@@ -1,0 +1,286 @@
+# aegis_config.yaml - Aegis AI Sentry Configuration File
+# This file allows you to customize all security settings without modifying code
+
+# =============================================================================
+# SECURITY PROFILES - Different performance vs security trade-offs
+# =============================================================================
+security_profiles:
+  # FAST PROFILE - Optimized for high-throughput applications (50-100ms)
+  # Best for: Real-time chat, high-volume APIs, live user interactions
+  fast:
+    enable_consensus: false          # Single LLM check (faster)
+    enable_entropy_check: false     # Skip entropy analysis
+    enable_coherence_check: false   # Skip coherence analysis
+    enable_context_analysis: false  # Skip conversation history analysis
+    enable_advanced_patterns: true  # Keep pattern matching (essential)
+    base_threshold: 40              # Higher threshold (less sensitive)
+    max_history_length: 3           # Minimal conversation context
+    guard_llm_timeout: 2.0          # Quick LLM timeout
+
+  # BALANCED PROFILE - Recommended for most applications (200-500ms)
+  # Best for: Web applications, API services, general security monitoring
+  balanced:
+    enable_consensus: false          # Single LLM check
+    enable_entropy_check: true      # Enable entropy analysis
+    enable_coherence_check: true    # Enable coherence analysis
+    enable_context_analysis: true   # Enable conversation analysis
+    enable_advanced_patterns: true  # Full pattern detection
+    base_threshold: 30              # Moderate threshold
+    max_history_length: 5           # Standard conversation context
+    guard_llm_timeout: 5.0          # Standard LLM timeout
+
+  # PARANOID PROFILE - Maximum security for critical applications (1-3s)
+  # Best for: Financial systems, sensitive data, high-security environments
+  paranoid:
+    enable_consensus: true           # Multi-LLM consensus (highest accuracy)
+    enable_entropy_check: true      # Full entropy analysis
+    enable_coherence_check: true    # Full coherence analysis
+    enable_context_analysis: true   # Deep conversation analysis
+    enable_advanced_patterns: true  # Comprehensive pattern detection
+    base_threshold: 20              # Low threshold (most sensitive)
+    max_history_length: 10          # Extended conversation context
+    guard_llm_timeout: 10.0         # Extended LLM timeout
+
+# =============================================================================
+# THREAT DETECTION WEIGHTS - How much each threat type contributes to final score
+# =============================================================================
+threat_weights:
+  # Pattern-based detections
+  homoglyph: 45        # Unicode character substitution attacks
+  template: 55         # System prompt template injection
+  command: 50          # Direct command injection attempts
+  data_exfil: 45       # Data extraction/dump requests
+  obfuscation: 40      # Text obfuscation and encoding tricks
+  
+  # Analysis-based detections
+  entropy: 50          # High randomness/entropy in text
+  coherence: 35        # Low semantic coherence (scrambled text)
+  linguistic: 25       # Multiple imperative commands
+  
+  # Guard LLM classifications (semantic understanding)
+  guard_llm_role: 60       # Role manipulation attempts
+  guard_llm_inject: 70     # Instruction injection (highest weight)
+  guard_llm_exfil: 55      # Data exfiltration attempts
+  
+  # Context-based detections
+  progressive: 30      # Escalating prompt complexity
+  persistent: 35       # Repeated suspicious keywords
+  preparation: 25      # Attack preparation indicators
+
+# =============================================================================
+# DETECTION THRESHOLDS - Fine-tune sensitivity of different detection methods
+# =============================================================================
+thresholds:
+  # Text analysis thresholds
+  entropy_threshold: 3.5                    # Minimum entropy to flag as suspicious
+  coherence_threshold: 0.4                  # Maximum coherence for obfuscation detection
+  non_ascii_ratio: 0.1                      # Max ratio of non-ASCII chars (10%)
+  
+  # Pattern matching thresholds
+  template_indicators_min: 2                # Min template indicators to trigger
+  consensus_confidence_min: 0.67            # Min confidence for LLM consensus (67%)
+  
+  # Context analysis thresholds
+  progressive_complexity_jump: 20           # Word count increase to flag progression
+  suspicious_keyword_min: 3                 # Min suspicious keywords in conversation
+  prep_indicator_min: 2                     # Min preparation indicators
+
+# =============================================================================
+# SUSPICIOUS KEYWORDS - Words that indicate potential attacks when clustered
+# =============================================================================
+suspicious_keywords:
+  # Direct instruction manipulation
+  - "ignore"
+  - "disregard"
+  - "forget"
+  - "override"
+  - "bypass"
+  - "circumvent"
+  
+  # System interaction terms
+  - "instruction"
+  - "instructions" 
+  - "system"
+  - "prompt"
+  - "directive"
+  - "protocol"
+  
+  # Role manipulation
+  - "act as"
+  - "pretend"
+  - "roleplay"
+  - "become"
+  - "transform"
+  - "you are now"
+  
+  # Authority escalation
+  - "admin"
+  - "administrator"
+  - "root"
+  - "superuser"
+  - "privileged"
+
+# =============================================================================
+# PREPARATION INDICATORS - Phrases used to prime/prepare for attacks
+# =============================================================================
+prep_indicators:
+  # Social engineering phrases
+  - "hypothetically"
+  - "for research"
+  - "academic purposes"
+  - "educational"
+  - "for science"
+  - "theoretically"
+  
+  # Demonstration requests
+  - "example"
+  - "demonstration"
+  - "show me how"
+  - "walk me through"
+  - "step by step"
+  
+  # Authority/urgency
+  - "emergency"
+  - "urgent"
+  - "authorized"
+  - "official"
+  - "legitimate"
+
+# =============================================================================
+# TEMPLATE INDICATORS - Patterns that suggest prompt template injection
+# =============================================================================
+template_indicators:
+  # Common prompt markers
+  - "system:"
+  - "user:"
+  - "assistant:"
+  - "human:"
+  - "ai:"
+  
+  # Formatting markers
+  - "###"
+  - "---"
+  - "```"
+  - ">>>"
+  - "<<<"
+  
+  # XML-style tags
+  - "<system>"
+  - "<user>"
+  - "<assistant>"
+  - "[INST]"
+  - "[/INST]"
+
+# =============================================================================
+# COMMAND INJECTION PATTERNS - Regex patterns for detecting command injection
+# =============================================================================
+command_patterns:
+  # Direct instruction override patterns
+  - '\b(ignore|disregard|forget|override)\s+(all\s+)?(previous\s+)?(instructions?|rules?|directives?)\b'
+  - '\b(bypass|circumvent|disable)\s+(all\s+)?(security\s+)?(measures?|protocols?|safeguards?)\b'
+  
+  # Role manipulation patterns  
+  - '\b(act\s+as|pretend\s+to\s+be|roleplay\s+as|you\s+are\s+now)\s+\w+\b'
+  - '\b(become|transform\s+into|switch\s+to)\s+(a\s+)?(\w+bot|\w+assistant)\b'
+  
+  # System prompt manipulation
+  - '\b(system\s+prompt|initial\s+prompt|base\s+instructions?)\b'
+  - '\b(reset|restart|reload)\s+(yourself|system|instructions?)\b'
+  
+  # Direct exploitation attempts
+  - '\b(jailbreak|jail\s+break|break\s+free)\b'
+  - '\b(unlimited|unrestricted|uncensored)\s+(mode|access|ai)\b'
+
+# =============================================================================
+# DATA EXFILTRATION PATTERNS - Detect attempts to extract sensitive information
+# =============================================================================
+exfil_patterns:
+  # Direct data requests
+  - '\b(show|display|print|output|return|give\s+me)\s+(all|every|complete|entire)\s+\w+'
+  - '\b(list|enumerate|dump)\s+(all\s+)?(users?|passwords?|credentials?|data)\b'
+  
+  # Database queries
+  - '\b(SELECT|INSERT|UPDATE|DELETE|DROP)\s+.*FROM\b'
+  - '\bdatabase\s+(schema|structure|tables?|dump)\b'
+  
+  # System information
+  - '\b(environment\s+variables?|config\s+files?|system\s+info)\b'
+  - '\b(source\s+code|internal\s+data|private\s+keys?)\b'
+
+# =============================================================================
+# CUSTOM SETTINGS - Additional configuration options
+# =============================================================================
+custom_settings:
+  # Response customization
+  max_response_time_ms: 30000      # Maximum allowed response time
+  enable_detailed_logging: true    # Log detailed threat analysis
+  cache_analysis_results: false    # Cache results for identical inputs
+  
+  # Rate limiting (if implemented)
+  max_requests_per_minute: 1000    # Rate limit per IP
+  enable_ip_blocking: false        # Block suspicious IPs
+  
+  # Integration settings
+  webhook_on_high_threats: false   # Send webhooks for high-risk detections
+  email_alerts: false              # Email notifications
+  slack_notifications: false      # Slack integration
+
+
+
+hidden_instruction_patterns:
+  - '\|\|BEGIN_.*?\|\|.*?\|\|END_.*?\|\|'
+  - '<!--.*?-->'
+  - '\[hidden\].*?\[/hidden\]'
+  - '<secret>.*?</secret>'
+  - '``````.*ignore.*previous'
+  - '```.*?(ignore|override|execute|system).*?```'
+  - '\{.*?"debug":\s*true.*?\}'
+  - '<config>.*?<secret>.*?</secret>.*?</config>'
+  - '//.*?(bypass|override)'
+  - '#.*?(ignore|disable)'
+  - '\[//\]:.*?(injection|payload)'
+
+# =============================================================================
+# SOCIAL ENGINEERING PATTERNS - Regex patterns for social engineering
+# =============================================================================
+social_engineering_patterns:
+  - '(test|research|example).*?(ignore|override|execute)'
+  - '(just|simply).*?(checking|testing).*?(command|instruction)'
+  - '(harmless|innocent).*?(experiment).*?(secret|password)'
+  - '(academic|educational).*?(purposes).*?(show|display|list)'
+  - '(help|assist).*?(analyze|review).*?(%[0-9a-f]{2}|\|\|)'
+  - '\[(ERROR|DEBUG)\].*?(execute|run|ignore)'
+
+# =============================================================================
+# DLP (DATA LOSS PREVENTION) RULES - Detect and redact sensitive data
+# =============================================================================
+# This section allows you to define custom regex patterns to find and
+# handle sensitive information like API keys, PII, etc.
+# action can be 'redact' or 'block'.
+dlp_rules:
+  - name: "Indian PAN Card"
+    pattern: '[A-Z]{5}[0-9]{4}[A-Z]{1}'
+    action: "redact"
+    severity: "High"
+
+  - name: "Aadhaar Card"
+    pattern: '\b[2-9]{1}[0-9]{3}\s[0-9]{4}\s[0-9]{4}\b'
+    action: "redact"
+    severity: "High"
+
+  - name: "Credit Card Number"
+    pattern: '\b(?:\d[ -]*?){13,16}\b'
+    action: "block"
+    severity: "Critical"
+
+  - name: "Generic API Key"
+    pattern: '\b(sk|pk)_[a-zA-Z0-9]{20,}\b'
+    action: "redact"
+    severity: "Critical"
+
+# =============================================================================
+# INTEGRATION SETTINGS - Webhook URLs for notifications
+# =============================================================================
+# The backend will check this URL to send Slack alerts.
+# If the URL is empty, no notifications will be sent.
+slack_webhook_url: "" # <-- Add your Slack Webhook URL here

@@ -1,0 +1,36 @@
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# AI/ML Libraries
+spacy==3.7.2
+groq==0.4.1
+
+# Data Processing & Validation
+pydantic==2.5.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# Text Processing
+thefuzz[speedup]==0.22.1
+python-levenshtein==0.23.0
+
+# Configuration Management
+pyyaml==6.0.1
+
+# System Dependencies
+pathlib
+unicodedata
+asyncio
+logging
+math
+time
+enum
+typing
+os
+re
+base64
+flask
+flask_sqlalchemy
+flask_login
+flask_bcrypt

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Aegis AI Sentry - Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <div class="logo-text">
+                    <h1>Aegis AI Sentry</h1>
+                    <p>AI Security Monitoring</p>
+                </div>
+            </div>
+            <div class="sidebar-scrollable-nav">
+                <nav class="sidebar-nav">
+                    <a href="{{ url_for('dashboard') }}" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="{{ url_for('activity_log') }}" class="nav-item"><i class="fas fa-history"></i> Activity
+                        Log</a>
+
+                    <a href="{{ url_for('dlp_rules') }}" class="nav-item"><i class="fas fa-user-secret"></i> DLP
+                        Rules</a>
+                    <a href="{{ url_for('integrations') }}" class="nav-item"><i class="fas fa-plug"></i>
+                        Integrations</a>
+                    <a href="{{ url_for('settings') }}" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="{{ url_for('logout') }}" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+                </nav>
+
+
+            </div>
+
+        </aside>
+        <div class="resizer" id="dragHandle"></div>
+
+        <main class="main-content">
+            <header class="main-header">
+                <button class="mobile-nav-toggle" id="mobileNavToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="dashboard-title">Profile Settings</h1>
+            </header>
+
+            <div class="profile-grid">
+                <div class="profile-card">
+                    <div class="card-header no-border">
+                        <h2>Personal Information</h2>
+                        <button class="btn btn-secondary"><i class="fas fa-pencil-alt"></i> Edit Profile</button>
+                    </div>
+                    <div class="profile-details-grid">
+                        <div class="form-group">
+                            <label for="full-name">Full Name</label>
+                            <input type="text" id="full-name" name="full-name" value="Sahil Mallick" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <input type="text" id="role" name="role" placeholder="Enter your role...">
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" value="{{ current_user.username }}"
+                                readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" value="{{ current_user.email }}" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <div class="card-header no-border">
+                        <h2>Change Password</h2>
+                    </div>
+                    <form method="POST" action="">
+                        <div class="form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" name="current_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" name="new_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm New Password</label>
+                            <input type="password" id="confirm-password" name="confirm_password" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Update Password</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="profile-card danger-zone">
+                    <div class="card-header no-border">
+                        <h2>Danger Zone</h2>
+                    </div>
+                    <div class="danger-item">
+                        <div>
+                            <strong>Delete Account</strong>
+                            <p>Once you delete your account, there is no going back. Please be certain.</p>
+                        </div>
+                        <button class="btn btn-danger">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+</body>
+
+</html>
