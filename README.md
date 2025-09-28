@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Aegis AI Logo](aegis-dashboard/static/images/dashboard-image.png)
+![Aegis AI Logo](aegis-dashboard/static/images/dashboard-image-2.png)
 
 **🛡️ Advanced AI Security Platform for LLM Protection**
 
